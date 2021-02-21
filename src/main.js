@@ -4,6 +4,7 @@ import vuetify from './plugins/vuetify';
 import VueSocketIO from 'vue-socket.io';
 import socket from './socket';
 import store from './store'
+import './registerServiceWorker'
 
 Vue.config.productionTip = false;
 
