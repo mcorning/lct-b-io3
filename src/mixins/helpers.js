@@ -1,21 +1,19 @@
-import moment from "moment";
-
 export default {
   data() {
     return {
       daysBack: 14,
-      today: "YYYY-MM-DD",
+      today: 'YYYY-MM-DD',
       // visitFormat: "HH:mm:ss:SSS on ddd, MMM DD",
-      visitFormat: "HH:mm ddd, MMM DD",
+      visitFormat: 'HH:mm ddd, MMM DD',
       defaultQuery: {
-        visitor: "",
-        id: "",
-        nsp: "",
+        visitor: '',
+        id: '',
+        nsp: '',
       },
     };
   },
   methods: {
-    printJson: function(json, spacer = 3) {
+    printJson: function (json, spacer = 3) {
       const replacer = null;
       return JSON.stringify(json, replacer, spacer);
     },
@@ -46,7 +44,7 @@ export default {
     printQuery() {
       const query = this.getQuery();
       if (!query.id) {
-        return "Empty query";
+        return 'Empty query';
       }
       return this.printJson(query);
     },
@@ -71,36 +69,30 @@ export default {
     },
     //#endregion
 
-    //#region moment-based code
+    //#region this.$luxon-based code
     getNow() {
       // const shortDateTimeFormat = 'lll';
-      const timeFormat = "HH:mm:ss:SSS";
-      return moment().format(timeFormat);
+      const timeFormat = 'HH:mm:ss:SSS';
+      return this.$luxon(new Date(), timeFormat);
     },
 
     isToday(date, daysBack) {
-      let x = moment(date).format(this.today);
-      let y = moment()
-        .add(-daysBack, "day")
-        .format(this.today);
+      let x = this.$luxon(date, this.today);
+      let y = this.$luxon().add(-daysBack, 'day').format(this.today);
       return x == y;
     },
 
     isBetween(date, daysBack) {
-      let visit = moment(date);
+      let visit = this.$luxon(date);
 
-      let past = moment()
-        .add(-daysBack, "day")
-        .format("YYYY-MM-DD");
-      let tomorrow = moment()
-        .add(1, "day")
-        .format("YYYY-MM-DD");
+      let past = this.$luxon().add(-daysBack, 'day').format('YYYY-MM-DD');
+      let tomorrow = this.$luxon().add(1, 'day').format('YYYY-MM-DD');
       let test = visit.isBetween(past, tomorrow);
       return test;
     },
 
     formatVisitedDate(date) {
-      let x = moment(new Date(date)).format(this.visitFormat);
+      let x = this.$luxon(new Date(date), this.visitFormat);
       return x;
     },
 
@@ -109,8 +101,8 @@ export default {
 
       return array
         .filter((v) => v[val]) // ignore Room Opened/Closed messages
-        .reduce(function(a, c) {
-          let key = moment(c[prop]).format("YYYY-MM-DD");
+        .reduce(function (a, c) {
+          let key = this.$luxon(c[prop], 'YYYY-MM-DD');
           if (!a[key]) {
             a[key] = [];
           }

@@ -3,7 +3,7 @@
     <v-app-bar app color="primary" dense dark>
       <v-row align="center" justify="space-between" dense>
         <v-col>
-          <v-btn width="48" height="48" to="about" color="primary" text>
+          <v-btn width="48" height="48" color="primary" text>
             <soteria-icon />
           </v-btn>
           <a
@@ -40,9 +40,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <v-main>
-      <router-view></router-view>
-    </v-main>
+    <v-main> <Visitor /> </v-main>
 
     <v-footer v-if="false" color="primary lighten-1" padless>
       <v-layout justify-center wrap align-center>
@@ -99,13 +97,14 @@
 </template>
 
 <script>
-// import update from "@/mixins/update.js";
+import Visitor from './components/Visitor.vue';
+import update from '@/mixins/update.js';
 // import helpers from "@/mixins/helpers.js";
 
 export default {
   name: 'App',
 
-  components: {},
+  components: { Visitor },
   computed: {
     build() {
       return this.$store.getters.appVersion;
@@ -160,6 +159,7 @@ export default {
     },
   },
 
+  mixins: [update],
   // mixins: [update, helpers],
 
   // watch: {
