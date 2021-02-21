@@ -3,6 +3,7 @@ import App from './App.vue';
 import vuetify from './plugins/vuetify';
 import VueSocketIO from 'vue-socket.io';
 import socket from './socket';
+import store from './store'
 
 Vue.config.productionTip = false;
 
@@ -17,5 +18,6 @@ Vue.use(
 
 new Vue({
   vuetify,
-  render: (h) => h(App),
+  store,
+  render: (h) => h(App)
 }).$mount('#app');
