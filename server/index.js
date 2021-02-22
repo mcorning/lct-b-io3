@@ -12,6 +12,7 @@ const { InMemorySessionStore } = require('./sessionStore');
 const sessionStore = new InMemorySessionStore();
 
 io.use((socket, next) => {
+  console.log('io.use():', socket.id, socket.handshake);
   const sessionID = socket.handshake.auth.sessionID;
   if (sessionID) {
     const session = sessionStore.findSession(sessionID);

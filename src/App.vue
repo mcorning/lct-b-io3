@@ -99,7 +99,7 @@
 <script>
 import Visitor from './components/Visitor.vue';
 import update from '@/mixins/update.js';
-// import helpers from "@/mixins/helpers.js";
+import helpers from '@/mixins/helpers.js';
 
 export default {
   name: 'App',
@@ -159,14 +159,7 @@ export default {
     },
   },
 
-  mixins: [update],
-  // mixins: [update, helpers],
-
-  // watch: {
-  //   route(val) {
-  //     this.$router.push(val);
-  //   },
-  // },
+  mixins: [update, helpers],
 
   async mounted() {
     console.log('App.vue mounted');
