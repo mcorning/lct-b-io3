@@ -2,23 +2,20 @@ const UNIT_TEST = 1;
 
 const SHOW = 0;
 const socket = require('./socket.js');
-const { getNow, printJson } = require('../utils/helpers');
-
-const clc = require('cli-color');
-const success = clc.green.bold;
-const error = clc.red.bold;
-const warn = clc.yellow;
-// const info = clc.cyan;
-// const notice = clc.blue;
-const highlight = clc.magenta;
-// const bold = clc.bold;
+const { authTest } = require('./unit/Negative.js');
+const {
+  getNow,
+  printJson,
+  success,
+  error,
+  warn,
+  highlight,
+  bgBlue,
+  bgMagenta,
+} = require('../utils/helpers');
 
 console.log(highlight(getNow(), ': Starting socket.js'));
-console.log(UNIT_TEST ? 'Running Unit Tests' : 'Production');
-
-// test that socket is refused if auth absent
-let x = socket.connect();
-console.log(x.connected ? error('Test failed') : success('Test Passed'));
+console.log(UNIT_TEST ? bgBlue('Running Unit Tests') : bgMagenta('Production'));
 
 function OpenVisitorConnection(visitor) {
   try {
@@ -87,7 +84,12 @@ function OpenVisitorConnection(visitor) {
 }
 
 if (UNIT_TEST) {
-  OpenVisitorConnection('mpc');
+  console.log('1)');
+  authTest(socket);
+  console.log(' ');
+
+  // console.log('2)');
+  // OpenVisitorConnection('mpc');
 }
 
 module.exports = {

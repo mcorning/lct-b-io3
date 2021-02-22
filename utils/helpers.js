@@ -1,15 +1,24 @@
-const socketIoServerUrl = 'http://localhost:3000';
+const clc = require('cli-color');
+const success = clc.green.bold;
+const error = clc.red.bold;
+const warn = clc.yellow;
+const info = clc.cyan;
+const notice = clc.blue;
+const highlight = clc.magenta;
+const bold = clc.bold;
+const bgBlue = clc.bgBlue;
+const bgMagenta = clc.bgMagenta;
 
 //https://moment.github.io/luxon/docs/
 const { DateTime } = require('luxon');
 const base64id = require('base64id');
 const DEBUG = 0;
 
-const newId = (() => {
+const newId = () => {
   const id = base64id.generateId();
   console.log('New ID', id);
   return id;
-})();
+};
 
 // helper helpers
 function getRandomIntBetween(min, max) {
@@ -197,5 +206,13 @@ module.exports = {
   newId,
   printJson,
   report,
-  socketIoServerUrl,
+  success,
+  error,
+  warn,
+  info,
+  notice,
+  highlight,
+  bold,
+  bgBlue,
+  bgMagenta,
 };
