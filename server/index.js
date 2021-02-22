@@ -4,6 +4,7 @@ const io = require('socket.io')(httpServer, {
     origin: 'http://localhost:8081',
   },
 });
+const { getNow, printJson } = require('../utils/helpers');
 
 const crypto = require('crypto');
 const randomId = () => crypto.randomBytes(8).toString('hex');
@@ -11,25 +12,45 @@ const randomId = () => crypto.randomBytes(8).toString('hex');
 const { InMemorySessionStore } = require('./sessionStore');
 const sessionStore = new InMemorySessionStore();
 
+// Socket.io V3 no longer uses the query string for things like this
+//see <https://socket.io/docs/v3/migrating-from-2-x-to-3-0/#Add-a-clear-distinction-between-the-Manager-query-option-and-the-Socket-query-option>:
+// const base64id = require('base64id');
+// const URL = require('url').URL;
+// io.engine.generateId = (req) => {
+//   const myURL = new URL(req.url);
+//   const prevId = myURL.searchParams.get('id');
+//   console.log(prevId);
+//   const parsedUrl = new url.parse(req.url);
+//   const params = new URLSearchParams(parsedUrl.search);
+//   const prevId = params.get("id");
+//   // prevId is either a valid id or an empty string
+//   if (!prevId) {
+//     return prevId;
+//   }
+//   return base64id.generateId();
+// };
+
+// const url = require("url");
+
 io.use((socket, next) => {
-  console.log('io.use():', socket.id, socket.handshake);
+  console.log('io.use():', getNow(), socket.id, printJson(socket.handshake));
   const sessionID = socket.handshake.auth.sessionID;
   if (sessionID) {
     const session = sessionStore.findSession(sessionID);
     if (session) {
       socket.sessionID = sessionID;
       socket.userID = session.userID;
-      socket.username = session.username;
+      socket.visitor = session.visitor;
       return next();
     }
   }
-  const username = socket.handshake.auth.username;
-  if (!username) {
-    return next(new Error('invalid username'));
+  const visitor = socket.handshake.auth.visitor;
+  if (!visitor) {
+    return next(new Error('invalid visitor'));
   }
   socket.sessionID = randomId();
   socket.userID = randomId();
-  socket.username = username;
+  socket.visitor = visitor;
   next();
 });
 
@@ -37,7 +58,7 @@ io.on('connection', (socket) => {
   // persist session
   sessionStore.saveSession(socket.sessionID, {
     userID: socket.userID,
-    username: socket.username,
+    visitor: socket.visitor,
     connected: true,
   });
 
@@ -55,7 +76,7 @@ io.on('connection', (socket) => {
   sessionStore.findAllSessions().forEach((session) => {
     users.push({
       userID: session.userID,
-      username: session.username,
+      visitor: session.visitor,
       connected: session.connected,
     });
   });
@@ -64,7 +85,7 @@ io.on('connection', (socket) => {
   // notify existing users
   socket.broadcast.emit('user connected', {
     userID: socket.userID,
-    username: socket.username,
+    visitor: socket.visitor,
     connected: true,
   });
 
@@ -87,7 +108,7 @@ io.on('connection', (socket) => {
       // update the connection status of the session
       sessionStore.saveSession(socket.sessionID, {
         userID: socket.userID,
-        username: socket.username,
+        visitor: socket.visitor,
         connected: false,
       });
     }
